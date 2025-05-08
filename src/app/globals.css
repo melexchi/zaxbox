@@ -15,6 +15,21 @@
   }
 }
 
+@media (max-width: 700px) and (orientation: landscape) {
+  .fold-full-image {
+    width: 100% !important;
+    height: 100vh !important;
+    order: 1 !important;
+  }
+
+  .fold-hide-text {
+    display: none !important;
+  }
+}
+
+
+
+
 @media (min-width: 912px) and (max-width: 1368px) {
   .surface\:translate-y-30 {
     transform: translateY(30px); 
@@ -46,6 +61,18 @@
   background: transparent linear-gradient(180deg, #A0763F 0%, #503B20 100%) 0% 0% no-repeat padding-box;
 }
 
+
+@layer utilities{
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hide-scrollbar{
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
 
 
 
@@ -85,3 +112,4 @@
 
 
 }
+

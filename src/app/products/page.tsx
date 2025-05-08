@@ -1,8 +1,12 @@
+import Products from "../productsComponents/Products"
+
 const products=()=>{
 
 return(
 
-<div className=""> Products</div>
+<main className="w-full h-auto overflow-hidden">
+     <Products />
+    </main>
 
 
 )
