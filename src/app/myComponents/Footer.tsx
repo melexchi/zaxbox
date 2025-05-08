@@ -48,9 +48,9 @@ const Footer = () => {
 
           <div className="flex flex-col items-center sm:items-start space-y-3 ">
             <h2 className="text-white text-lg font-medium mb-3">CONTACT</h2>
-            <p className="text-[#D3B466] text-sm hover:text-gray-300 transition-colors">
+            <a href="mailto:hi@zaxbox.net" className="text-[#D3B466] text-sm hover:text-gray-300 transition-colors ">
               hello@zaxbox.net
-            </p>
+            </a>
             <div className=" flex justify-between gap-3">
             <FaLinkedinIn className="text-black text-2xl sm:text-2xl bg-white rounded-sm py-1 px-1" />
             <FaFacebookSquare  className="text-black text-2xl sm:text-2xl bg-white rounded-sm py-1 px-1" /> 
