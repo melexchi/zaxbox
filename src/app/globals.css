@@ -1,0 +1,87 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
+
+@theme {
+  --font-sans: "Manrope", sans-serif;
+  --color-primary: #2563eb;
+  --color-secondary: #1f2937;
+  --breakpoint-md: 768px;
+}
+
+
+@media (width: 768px) and (height: 1024px) {
+  .custom-top-position {
+    top: 105%; 
+  }
+}
+
+@media (min-width: 912px) and (max-width: 1368px) {
+  .surface\:translate-y-30 {
+    transform: translateY(30px); 
+  }
+
+  .surface\:pr-30 {
+    padding-right: 30px;
+  }
+
+  .surface\:pl-20 {
+    padding-left: 20px;
+  }
+
+}
+
+
+
+@media (width: 540px) and (height: 720px) {
+  .mt-surface-duo {
+    margin-top: -40%;
+  }
+}
+
+
+
+
+
+.custom-gradient {
+  background: transparent linear-gradient(180deg, #A0763F 0%, #503B20 100%) 0% 0% no-repeat padding-box;
+}
+
+
+
+
+
+@layer base {
+  
+  :root {
+    @apply bg-[#F5F5F5] text-gray-900;
+  }
+
+  html, body, #__next {
+    @apply w-full overflow-x-hidden m-0 p-0;
+    font-family: var(--font-sans);
+  }
+
+  .full-bleed {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+  }
+  
+  .container{
+    @apply bg-slate-50 p-15
+  }
+
+  .dark {
+    @apply bg-gray-900 text-white;
+  }
+
+  h1 {
+    @apply text-4xl font-bold;
+  }
+
+  h2 {
+    @apply text-2xl font-semibold;
+  }
+
+
+
+}

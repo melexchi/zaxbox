@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Next.js
+.next/
+out/
+
+# Environment files
+.env
+.env*.local
+
+# System files
+.DS_Store
+*.zip
