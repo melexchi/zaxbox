@@ -5,16 +5,19 @@ const blogPosts = [
     title: "My First Blog Post",
     slug: "my-first-blog-post",
     excerpt: "This is the excerpt for my first blog post.",
+    image:'https://placehold.co/600x400'
   },
   {
     title: "My Second Blog Post",
     slug: "my-second-blog-post",
     excerpt: "This is the excerpt for my second blog post.",
+     image:'https://placehold.co/600x400'
   },
   {
     title: "My Third Blog Post",
     slug: "my-third-blog-post",
     excerpt: "This is the excerpt for my third blog post.",
+     image:'https://placehold.co/600x400'
   },
 ];
 
