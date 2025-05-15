@@ -37,6 +37,7 @@ export default function LoginForm() {
       setServerError(result.error || "Something went wrong");
     } else {
       router.push("/admin"); 
+      router.refresh();
     }
 
     setLoading(false);

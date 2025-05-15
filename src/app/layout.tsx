@@ -5,6 +5,8 @@ import "./globals.css";
 import Container from "./myComponents/Container";
 import Navbar from "./myComponents/Navbar";
 import Footer from "./myComponents/Footer";
+import { cookies } from "next/headers";
+import Router from "next/router";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,18 +29,22 @@ export const metadata: Metadata = {
   description: "Trade Giftcards, Trade Crypto, Pay bill, Fund your Virtual cards, ",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  const cookieStore = cookies();
+  const token =  (await cookieStore).get("auth-token")?.value;
+  const isLoggedIn = !!token;
   return (
     <html lang="en">
       <body
         className={`${manrope.variable} antialiased`}
       >
         <Container>
-        <Navbar /> 
+          {!isLoggedIn && <Navbar />}
         {children}
         <Footer />
         </Container>
