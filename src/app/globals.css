@@ -113,3 +113,8 @@
 
 }
 
+.ProseMirror-focused {
+  outline: none !important;
+  border-color: inherit !important; 
+}
+

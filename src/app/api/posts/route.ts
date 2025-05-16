@@ -14,7 +14,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    const cookieStore = cookies(); // No need to await
+    const cookieStore = cookies(); 
     const token = (await cookieStore).get("auth-token")?.value;
 
     if (!token) {
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
 
     let decoded: any;
     try {
-      decoded = jwt.verify(token, JWT_SECRET);
+      decoded = jwt.verify(token, JWT_SECRET!);
     } catch (err) {
       return NextResponse.json({ error: "Invalid or expired token." }, { status: 401 });
     }

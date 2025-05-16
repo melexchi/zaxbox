@@ -157,12 +157,20 @@ export default function Postlist(){
     }
   }
 
-  const deletePost = async (id: number) => {
-    if (confirm("Are you sure?")) {
-      await fetch(`/api/posts/${id}`, { method: "DELETE" })
-      fetchPosts()
+ const deletePost = async (id: number) => {
+  if (confirm("Are you sure?")) {
+    try {
+      const res = await fetch(`/api/posts/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete post");
+
+      toast.success("Post deleted successfully");
+      fetchPosts();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Delete failed");
     }
   }
+}
+
 
   useEffect(() => {
     fetchPosts()

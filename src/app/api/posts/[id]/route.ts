@@ -28,11 +28,11 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   const postId = Number(params.id);
 
   try {
-    // @ts-ignore: parseForm expects a Node.js IncomingMessage, NextRequest isn't compatible directly
+    
     const { fields, files } = await parseForm(req);
 
     const title = fields.title?.[0] || '';
-    const content = fields.content?.[0] || ''; // Tiptap HTML or JSON string
+    const content = fields.content?.[0] || ''; 
     const published = fields.published?.[0] === 'true';
     const categoryIds = JSON.parse(fields.categoryIds?.[0] || '[]');
     const updatedAt = fields.updatedAt?.[0] || new Date().toISOString();
@@ -64,6 +64,23 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     return NextResponse.json(updatedPost);
   } catch (error: any) {
     console.error('PATCH error:', error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+
+
+export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+  const postId = Number(params.id);
+
+  try {
+    await prisma.post.delete({
+      where: { id: postId },
+    });
+
+    return NextResponse.json({ message: 'Post deleted successfully' });
+  } catch (error: any) {
+    console.error('DELETE error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

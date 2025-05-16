@@ -12,6 +12,8 @@ export default function TiptapEditor({
   content: string;
   onChange: (value: string) => void;
 }) {
+
+
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -38,30 +40,8 @@ export default function TiptapEditor({
     }
   };
 
-  const addImageFromLocal = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("image", file);
-
-    const res = await fetch("/api/upload", {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await res.json();
-    if (res.ok && data.url) {
-      editor?.chain().focus().setImage({ src: data.url }).run();
-    } else {
-      alert(data.error || "Failed to upload image");
-    }
-
-    event.target.value = ""; // reset input
-  };
-
   return (
-    <div className="border rounded p-2">
+    <div className="border rounded p-2 flex flex-col h-full">
       <div className="mb-2 flex gap-2 flex-wrap">
         <button
           type="button"
@@ -84,19 +64,15 @@ export default function TiptapEditor({
         >
           Add Image by URL
         </button>
-
-        <label className="bg-gray-200 px-2 py-1 rounded cursor-pointer">
-          Upload Image
-          <input
-            type="file"
-            accept="image/*"
-            onChange={addImageFromLocal}
-            className="hidden"
-          />
-        </label>
       </div>
 
-      <EditorContent editor={editor} className="min-h-[150px]" />
+     <EditorContent
+  editor={editor}
+  onClick={() => editor?.commands.focus()} 
+  className="flex-grow border rounded p-4 min-h-[200px] max-h-[400px] overflow-auto  cursor-text border-none shadow-none"
+  style={{ whiteSpace: "pre-wrap" }}
+  
+/>
     </div>
   );
 }
