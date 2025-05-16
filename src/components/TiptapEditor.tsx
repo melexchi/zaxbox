@@ -25,6 +25,7 @@ export default function TiptapEditor({
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
+    immediatelyRender: false,
   });
 
   useEffect(() => {
