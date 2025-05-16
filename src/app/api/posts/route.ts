@@ -10,6 +10,8 @@ if (!JWT_SECRET) {
   throw new Error("JWT_SECRET is not defined in environment variables");
 }
 
+
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -48,19 +50,45 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET() {
-  try {
-    const posts = await prisma.post.findMany({
-      orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        title: true,
-        published: true,
-        createdAt: true,
-      },
-    });
+export async function GET(req:Request) {
 
-    return NextResponse.json(posts);
+
+
+  try {
+
+    
+  const {searchParams} = new URL(req.url);
+
+  const page= parseInt(searchParams.get("page")|| "1");
+  const limit = parseInt(searchParams.get("limit") || "5")
+  const skip = (page-1)*limit;
+
+
+    const [posts, total]= await Promise.all([
+      prisma.post.findMany({
+        skip,
+        take:limit,
+        orderBy: { createdAt: "desc" },
+        select:{
+          id:true,
+          title:true,
+          published:true,
+          createdAt:true
+        },
+      }),
+      prisma.post.count(),
+    ]);
+
+
+      const totalPages = Math.ceil(total/limit);
+
+      return NextResponse.json({
+        posts,
+        total,
+        page,
+        totalPages
+      })
+    
   } catch (err) {
     console.error("GET /api/posts error:", err);
     return NextResponse.json({ error: "Failed to fetch posts" }, { status: 500 });

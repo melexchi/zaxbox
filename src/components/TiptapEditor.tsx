@@ -4,6 +4,7 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import { useEffect } from "react";
+import Link from "@tiptap/extension-link";
 
 export default function TiptapEditor({
   content,
@@ -20,11 +21,17 @@ export default function TiptapEditor({
       Image.configure({
         inline: false,
       }),
+      Link.configure({ openOnClick: false }),
+      
     ],
-    content,
+    content:`
+        <p>Click the button to open the link popover.</p>
+        <p><a href="https://www.tiptap.dev">Tiptap</a></p>
+        `,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
+    
     immediatelyRender: false,
   });
 
@@ -68,11 +75,11 @@ export default function TiptapEditor({
       </div>
 
      <EditorContent
-  editor={editor}
-  onClick={() => editor?.commands.focus()} 
-  className="flex-grow border rounded p-4 min-h-[200px] max-h-[400px] overflow-auto  cursor-text border-none shadow-none"
-  style={{ whiteSpace: "pre-wrap" }}
-  
+        editor={editor}
+        onClick={() => editor?.commands.focus()} 
+        className="flex-grow border rounded p-4 min-h-[200px] max-h-[400px] overflow-auto  cursor-text border-none shadow-none"
+        style={{ whiteSpace: "pre-wrap" }}
+        
 />
     </div>
   );

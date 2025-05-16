@@ -1,5 +1,6 @@
 "use client"
 
+import TiptapEditor from "@/components/TiptapEditor";
 import { title } from "process";
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify";
@@ -24,6 +25,8 @@ interface Category{
 
 export default function Postlist(){
     const [posts, setPosts]=  useState<Post[]>([]);
+    const [page, setPage]= useState(1)
+    const [totalPages, setTotalPages]= useState(1)
     const [categories, setCategories] = useState<Category[]>([])
     const [editingPost, setEditingPost] = useState<Post | null>(null);
     const [formData, setFormData] = useState<Partial<Post> & { imageFile?: File }>({
@@ -36,23 +39,25 @@ export default function Postlist(){
 
     const [newCategoryName, setNewCategoryName]= useState("");
     const [showCategoryModal, setShowCategoryModal]=useState(false)
+    const limit= 5
 
 
 
 
 
 
-    const fetchPosts = async ()=>{
+    const fetchPosts = async (page=1, limit=5)=>{
         try{
             const [postsRes, categoriesRes]= await Promise.all([
-                fetch("/api/posts"),
+                fetch(`/api/posts?page=${page}&limit=${limit}`),
                 fetch("/api/categories")
             ])
             const postsData = await postsRes.json()
             const categoriesData = await categoriesRes.json()
 
 
-            setPosts(postsData)
+            setPosts(postsData.posts)
+            setTotalPages(postsData.totalPages)
             setCategories(categoriesData)
 
         }catch(err){
@@ -84,8 +89,6 @@ export default function Postlist(){
         }))
     }
 
-
-    // to toggle category
 
     const toggleCategory=(category:Category)=>{
 
@@ -173,8 +176,8 @@ export default function Postlist(){
 
 
   useEffect(() => {
-    fetchPosts()
-  }, [])
+    fetchPosts(page)
+  }, [page])
 
   return (
     <div className="space-y-4 p-4">
@@ -225,71 +228,147 @@ export default function Postlist(){
       )}
 
       {/* Edit Post Modal */}
-      {editingPost && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-          <div className="bg-white p-6 rounded-lg w-full max-w-md">
-            <h3 className="font-bold text-lg mb-4">Edit Post</h3>
-            <form onSubmit={handleUpdateSubmit}>
-              <div className="mb-4">
-                <label className="block mb-2">Title</label>
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
-                />
-              </div>
+ 
+
+  {editingPost && (
+  <div className="fixed inset-0 bg-black/30 z-50 flex items-start justify-center overflow-y-auto pt-20">
+    <div className="bg-white p-6 rounded-xl w-full max-w-2xl space-y-4">
+      <h3 className="font-bold text-2xl mb-4">Edit Post</h3>
+      <form onSubmit={handleUpdateSubmit} className="space-y-4">
+
+        {/* Title */}
+        <div>
+          <label className="block text-sm font-medium mb-1">Title</label>
+          <input
+            type="text"
+            name="title"
+            value={formData.title}
+            onChange={handleInputChange}
+            className="w-full p-2 border border-gray-300 rounded"
+          />
+        </div>
+
+        {/* Rich Text Content */}
+        <div>
+          <label className="block text-sm font-medium mb-1">Content</label>
+          <TiptapEditor
+            content={formData.content || ""}
+            onChange={(newContent: string) =>
+              setFormData((prev) => ({ ...prev, content: newContent }))
+            }
+          />
+        </div>
+
+        {/* Image Input with Preview */}
+        <div>
+          <label className="block text-sm font-medium mb-1">Image</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                setFormData((prev) => ({ ...prev, imageFile: file }));
+              }
               
-              <div className="mb-4 flex items-center">
-                <input
-                  type="checkbox"
-                  name="published"
-                  id="published"
-                  checked={formData.published || false}
-                  onChange={handleInputChange}
-                  className="mr-2"
-                />
-                <label htmlFor="published">Published</label>
-              </div>
-              
-              <div className="mb-4">
-                <label className="block mb-2">Categories</label>
-                <div className="space-y-2">
-                  {categories.map(category => (
-                    <div key={category.id} className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id={`category-${category.id}`}
-                        checked={formData.categories?.some(c => c.id === category.id) || false}
-                        onChange={() => toggleCategory(category)}
-                        className="mr-2"
-                      />
-                      <label htmlFor={`category-${category.id}`}>{category.name}</label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
-              <div className="flex justify-end space-x-2">
+            }}
+          />
+          {/* Preview of uploaded image or existing one */}
+          {(formData.imageFile || editingPost.image) && (
+            <div className="mt-2">
+              <img
+                src={
+                  formData.imageFile
+                    ? URL.createObjectURL(formData.imageFile)
+                    : editingPost.image || ""
+                }
+                alt="Post"
+                className="max-h-48 rounded"
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Published Checkbox */}
+        <div className="flex items-center">
+          <input
+            type="checkbox"
+            name="published"
+            id="published"
+            checked={formData.published || false}
+            onChange={handleInputChange}
+            className="mr-2"
+          />
+          <label htmlFor="published">Published</label>
+        </div>
+
+        {/* Categories with tag style */}
+        <div>
+          <label className="block text-sm font-medium mb-1">Categories</label>
+          <div className="flex flex-wrap gap-2">
+            {categories.map((category) => {
+              const isSelected = formData.categories?.some(
+                (c) => c.id === category.id
+              );
+              return (
                 <button
                   type="button"
-                  onClick={() => setEditingPost(null)}
-                  className="px-4 py-2 border rounded"
+                  key={category.id}
+                  onClick={() => toggleCategory(category)}
+                  className={`px-3 py-1 rounded-full text-sm border transition ${
+                    isSelected
+                      ? "bg-[#E1C771] text-white border-[#E1C771]"
+                      : "bg-white text-gray-800 border-gray-300"
+                  }`}
                 >
-                  Cancel
+                  {category.name}
                 </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-500 text-white rounded"
-                >
-                  Update
-                </button>
-              </div>
-            </form>
+              );
+            })}
           </div>
         </div>
-      )}
+
+        {/* Buttons */}
+        <div className="flex justify-end gap-3">
+          <button
+            type="button"
+            onClick={() => setEditingPost(null)}
+            className="px-4 py-2 border rounded hover:bg-gray-100"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="px-4 py-2 bg-[#E1C771] text-white rounded hover:bg-black"
+          >
+            Update
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
 
       {/* Posts List */}
       <ul className="space-y-4">
@@ -324,13 +403,13 @@ export default function Postlist(){
               <div className="flex space-x-2">
                 <button
                   onClick={() => handleEditClick(post)}
-                  className="px-3 py-1 bg-blue-100 text-[#796d45] rounded"
+                  className="px-3 py-1 bg-blue-100 text-[#796d45] rounded cursor-pointer"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => deletePost(post.id)}
-                  className="px-3 py-1 bg-red-100 text-red-600 rounded"
+                  className="px-3 py-1 bg-red-100 text-red-600 rounded cursor-pointer"
                 >
                   Delete
                 </button>
@@ -339,6 +418,28 @@ export default function Postlist(){
           </li>
         ))}
       </ul>
+      <div className="flex justify-between items-center mt-4">
+          <button
+            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+            disabled={page === 1}
+            className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 cursor-pointer"
+          >
+            Previous
+          </button>
+
+          <span className="text-sm">
+            Page {page} of {totalPages}
+          </span>
+
+          <button
+            onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={page === totalPages}
+            className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 cursor-pointer"
+          >
+            Next
+          </button>
+        </div>
+
     </div>
   )
 

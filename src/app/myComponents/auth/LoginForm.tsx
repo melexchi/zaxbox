@@ -59,7 +59,7 @@ export default function LoginForm() {
 
       <button 
       type="submit" 
-      className="btn w-auto  bg-[#D3B466] text-white p-2 rounded hover:bg-black" 
+      className="btn w-auto  bg-[#D3B466] text-white p-2 rounded hover:bg-black cursor-pointer" 
       disabled={loading}>
         {loading ? "Logging in..." : "Login"}
       </button>
